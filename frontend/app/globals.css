@@ -1,5 +1,4 @@
 @import "tailwindcss";
-@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap');
 
 @theme {
   /* ── Base surfaces ── */
@@ -60,8 +59,8 @@
   --color-indigo-500: #6366F1;
 
   /* ── Typography ── */
-  --font-display: 'Nunito', 'Plus Jakarta Sans', system-ui, sans-serif;
-  --font-body:    'Nunito Sans', 'Inter', system-ui, sans-serif;
+  --font-display: var(--font-nunito), 'Nunito', system-ui, sans-serif;
+  --font-body:    var(--font-nunito-sans), 'Nunito Sans', system-ui, sans-serif;
 
   /* ── Radii ── */
   --radius-sm:   0.625rem;

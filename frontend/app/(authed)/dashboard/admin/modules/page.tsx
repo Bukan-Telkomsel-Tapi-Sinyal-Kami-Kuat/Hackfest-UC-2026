@@ -223,7 +223,9 @@ export default function AdminModulesPage() {
       {deleteConfirm && (
         <div className="fixed inset-0 z-50 bg-black/40 backdrop-blur-sm grid place-items-center px-6">
           <Card className="w-full max-w-sm p-7 text-center">
-            <div className="text-4xl mb-4">🗑️</div>
+            <div className="grid place-items-center w-14 h-14 rounded-2xl mx-auto mb-4" style={{ background: "#FEF2F2" }}>
+              <Trash2 className="w-7 h-7 text-red-400" />
+            </div>
             <h2 className="text-xl font-extrabold mb-2">Hapus Modul?</h2>
             <p className="text-sm mb-6" style={{ color: "var(--color-text-muted)" }}>
               Tindakan ini tidak dapat dibatalkan.

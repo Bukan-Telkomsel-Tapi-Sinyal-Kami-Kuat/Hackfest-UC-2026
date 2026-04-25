@@ -2,15 +2,15 @@
 
 import { useEffect } from "react";
 import { useRouter } from "next/navigation";
-import { Sparkles, TrendingUp, FileText } from "lucide-react";
+import { Sparkles, TrendingUp, FileText, ShieldCheck, Users2, BarChart3, Database } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { useAuth } from "@/context/AuthContext";
 import Link from "next/link";
 
 const STAT_CARDS = [
-  { emoji: "👥", label: "Total Pengguna", value: "—", note: "PARENT role", color: "var(--color-kids-purple-light)", accent: "var(--color-kids-purple-mid)" },
-  { emoji: "📊", label: "Sesi Berjalan", value: "—", note: "Dari database", color: "var(--color-kids-mint-light)", accent: "var(--color-kids-mint-mid)" },
-  { emoji: "🗃️", label: "Knowledge Base", value: "—", note: "RAGReference", color: "var(--color-kids-sun-light)", accent: "var(--color-kids-sun-mid)" },
+  { Icon: Users2, label: "Total Pengguna", value: "—", note: "PARENT role", color: "var(--color-kids-purple-light)", accent: "var(--color-kids-purple-mid)" },
+  { Icon: BarChart3, label: "Sesi Berjalan", value: "—", note: "Dari database", color: "var(--color-kids-mint-light)", accent: "var(--color-kids-mint-mid)" },
+  { Icon: Database, label: "Knowledge Base", value: "—", note: "RAGReference", color: "var(--color-kids-sun-light)", accent: "var(--color-kids-sun-mid)" },
 ];
 
 const QUICK_ACTIONS = [
@@ -33,10 +33,10 @@ export default function AdminPage() {
     <div className="p-8 max-w-4xl">
       <header className="mb-8 flex items-center gap-4">
         <div
-          className="grid place-items-center w-14 h-14 rounded-2xl text-2xl"
+          className="grid place-items-center w-14 h-14 rounded-2xl"
           style={{ background: "var(--color-kids-purple-light)" }}
         >
-          🛡️
+          <ShieldCheck className="w-7 h-7" style={{ color: "var(--color-kids-purple-mid)" }} />
         </div>
         <div>
           <h1 className="text-3xl font-extrabold">Admin Panel</h1>
@@ -49,7 +49,9 @@ export default function AdminPage() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-4 mb-10">
         {STAT_CARDS.map((card) => (
           <Card key={card.label} className="p-5 border-none" style={{ background: card.color }}>
-            <div className="text-3xl mb-3">{card.emoji}</div>
+            <div className="grid place-items-center w-10 h-10 rounded-xl mb-3" style={{ background: "white" }}>
+              <card.Icon className="w-5 h-5" style={{ color: card.accent }} />
+            </div>
             <div className="text-2xl font-extrabold mb-0.5" style={{ color: card.accent }}>{card.value}</div>
             <div className="text-sm font-bold">{card.label}</div>
             <div className="text-xs mt-0.5" style={{ color: "var(--color-text-muted)" }}>{card.note}</div>

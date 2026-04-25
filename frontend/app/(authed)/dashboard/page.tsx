@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from "react";
 import Link from "next/link";
-import { ArrowRight, UserPlus } from "lucide-react";
+import { ArrowRight, UserPlus, Users, BookOpen, Star, Baby } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
 import { useAuth } from "@/context/AuthContext";
@@ -76,7 +76,7 @@ export default function DashboardHomePage() {
     <div className="p-8 max-w-5xl">
       <header className="mb-8">
         <h1 className="text-3xl font-extrabold mb-1">
-          Halo, {user?.name?.split(" ")[0] ?? "Pengguna"} 👋
+          Halo, {user?.name?.split(" ")[0] ?? "Pengguna"}!
         </h1>
         <p style={{ color: "var(--color-text-muted)" }}>
           Pantau dan mulai sesi belajar anak Anda hari ini.
@@ -85,12 +85,14 @@ export default function DashboardHomePage() {
 
       <div className="grid grid-cols-3 gap-4 mb-8">
         {[
-          { emoji: "👦", label: "Profil Anak", value: children.length, color: "var(--color-kids-purple-light)", accent: "var(--color-kids-purple-mid)" },
-          { emoji: "📚", label: "Total Sesi", value: Object.values(sessionMap).flat().length, color: "var(--color-kids-mint-light)", accent: "var(--color-kids-mint-mid)" },
-          { emoji: "⭐", label: "Modul Dikerjakan", value: moduleStats.reduce((s, m) => s + m.totalSessions, 0), color: "var(--color-kids-sun-light)", accent: "var(--color-kids-sun-mid)" },
+          { Icon: Users, label: "Profil Anak", value: children.length, color: "var(--color-kids-purple-light)", accent: "var(--color-kids-purple-mid)" },
+          { Icon: BookOpen, label: "Total Sesi", value: Object.values(sessionMap).flat().length, color: "var(--color-kids-mint-light)", accent: "var(--color-kids-mint-mid)" },
+          { Icon: Star, label: "Modul Dikerjakan", value: moduleStats.reduce((s, m) => s + m.totalSessions, 0), color: "var(--color-kids-sun-light)", accent: "var(--color-kids-sun-mid)" },
         ].map((stat) => (
           <Card key={stat.label} className="p-5 flex items-center gap-3 border-none" style={{ background: stat.color }}>
-            <span className="text-3xl">{stat.emoji}</span>
+            <div className="grid place-items-center w-10 h-10 rounded-xl shrink-0" style={{ background: "white" }}>
+              <stat.Icon className="w-5 h-5" style={{ color: stat.accent }} />
+            </div>
             <div>
               <div className="text-2xl font-extrabold" style={{ color: stat.accent }}>{stat.value}</div>
               <div className="text-xs font-semibold" style={{ color: "var(--color-text-muted)" }}>{stat.label}</div>
@@ -113,7 +115,9 @@ export default function DashboardHomePage() {
         <div className="text-sm mb-8" style={{ color: "var(--color-text-muted)" }}>Memuat…</div>
       ) : children.length === 0 ? (
         <Card className="p-8 text-center mb-8">
-          <div className="text-4xl mb-4">👶</div>
+          <div className="grid place-items-center w-14 h-14 rounded-2xl mx-auto mb-4" style={{ background: "var(--color-kids-purple-light)" }}>
+            <Baby className="w-7 h-7" style={{ color: "var(--color-kids-purple-mid)" }} />
+          </div>
           <p className="mb-4" style={{ color: "var(--color-text-muted)" }}>
             Tambahkan profil anak untuk memulai sesi belajar.
           </p>

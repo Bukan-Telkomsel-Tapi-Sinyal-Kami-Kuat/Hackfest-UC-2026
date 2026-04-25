@@ -42,7 +42,7 @@ export function DashboardSidebar() {
       style={{ background: "var(--color-surface)", borderColor: "var(--color-border)" }}
     >
       <Link href="/" className="flex items-center gap-2.5 px-2 mb-8">
-        <Image src="/logo-visea.svg" alt="VISEA" width={32} height={21} />
+        <Image src="/logo visea.png" alt="VISEA" width={100} height={33} className="h-8 w-auto" />
         <span className="font-extrabold text-xl" style={{ color: "var(--color-navy)" }}>
           VISEA
         </span>

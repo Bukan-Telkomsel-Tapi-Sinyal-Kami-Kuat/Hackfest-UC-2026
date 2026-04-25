@@ -2,6 +2,7 @@
 
 import { use, useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { Trophy, Star } from "lucide-react";
 import { Button } from "@/components/ui/Button";
 import { useSession } from "@/context/SessionContext";
 import { motion } from "framer-motion";
@@ -49,26 +50,30 @@ export default function SessionCompletePage({ params }: { params: Promise<{ id: 
             initial={{ scale: 0 }}
             animate={{ scale: 1 }}
             transition={{ delay: 0.2, type: "spring", stiffness: 200 }}
-            className="text-7xl mb-6"
+            className="grid place-items-center w-20 h-20 rounded-full mx-auto mb-6"
+            style={{ background: "var(--color-kids-sun-light)" }}
           >
-            🎊
+            <Trophy className="w-10 h-10" style={{ color: "var(--color-kids-sun-mid)" }} />
           </motion.div>
 
           <h1 className="text-3xl font-extrabold mb-2">Sesi Selesai!</h1>
 
           {/* Stars */}
-          <div className="flex items-center justify-center gap-2 my-5">
+          <div className="flex items-center justify-center gap-3 my-5">
             {[1, 2, 3].map((s) => (
-              <motion.span
+              <motion.div
                 key={s}
                 initial={{ scale: 0, rotate: -30 }}
                 animate={{ scale: s <= stars ? 1 : 0.5, rotate: 0 }}
                 transition={{ delay: 0.3 + s * 0.15, type: "spring", stiffness: 300 }}
-                className="text-4xl"
-                style={{ opacity: s <= stars ? 1 : 0.3 }}
+                style={{ opacity: s <= stars ? 1 : 0.25 }}
               >
-                ⭐
-              </motion.span>
+                <Star
+                  className="w-9 h-9"
+                  style={{ color: s <= stars ? "var(--color-kids-sun-mid)" : "var(--color-border)" }}
+                  fill={s <= stars ? "var(--color-kids-sun-mid)" : "none"}
+                />
+              </motion.div>
             ))}
           </div>
 

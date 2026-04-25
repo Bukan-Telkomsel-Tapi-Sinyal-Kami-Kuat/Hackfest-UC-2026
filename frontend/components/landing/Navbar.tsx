@@ -29,7 +29,7 @@ export function Navbar() {
     <nav className="fixed top-0 inset-x-0 z-30 bg-white/80 backdrop-blur-md border-b border-[var(--color-border)]">
       <div className="max-w-7xl mx-auto px-6 h-16 flex items-center justify-between">
         <Link href="/" className="flex items-center gap-2.5">
-          <Image src="/logo-visea.svg" alt="VISEA" width={36} height={24} />
+          <Image src="/logo visea.png" alt="VISEA" width={120} height={40} className="h-9 w-auto" />
           <span className="font-extrabold text-xl tracking-tight" style={{ color: "var(--color-navy)" }}>
             VISEA
           </span>

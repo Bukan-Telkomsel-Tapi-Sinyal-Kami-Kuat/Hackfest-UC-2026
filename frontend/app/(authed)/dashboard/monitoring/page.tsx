@@ -13,6 +13,7 @@ import { INSTRUCTION_LABELS } from "@/types/session";
 import type { Child } from "@/types/child";
 import type { Session, BehavioralLog, ParentPrompt } from "@/types/session";
 import { cn } from "@/lib/utils/cn";
+import { Activity, Camera } from "lucide-react";
 import dynamic from "next/dynamic";
 
 const VisionTracker = dynamic(() => import("@/components/VisionTracker"), { ssr: false });
@@ -122,7 +123,10 @@ export default function MonitoringPage() {
   return (
     <div className="p-8 max-w-5xl">
       <header className="mb-6">
-        <h1 className="text-3xl font-extrabold mb-1">Monitoring 📡</h1>
+        <h1 className="text-3xl font-extrabold mb-1 flex items-center gap-3">
+          Monitoring
+          <Activity className="w-6 h-6" style={{ color: "var(--color-kids-purple-mid)" }} />
+        </h1>
         <p style={{ color: "var(--color-text-muted)" }}>
           Pantau fokus anak secara real-time selama sesi belajar.
         </p>
@@ -131,12 +135,13 @@ export default function MonitoringPage() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-6">
         {/* Left column */}
         <div className="flex flex-col gap-5">
+          {/* Camera / AI Vision card */}
           <Card className="overflow-hidden">
             <div className="flex items-center justify-between px-5 py-4 border-b" style={{ borderColor: "var(--color-border)" }}>
               <div className="flex items-center gap-2">
                 <div className="w-2 h-2 rounded-full" style={{ background: isActiveSession ? "var(--color-focus-high)" : "var(--color-text-subtle)" }} />
                 <span className="text-sm font-bold">
-                  {isActiveSession ? `Sesi Aktif · ${activeChild?.name}` : "Kamera"}
+                  {isActiveSession ? `Sesi Aktif · ${activeChild?.name}` : "AI Vision"}
                 </span>
               </div>
               <Button variant={showTracker ? "outline" : "primary"} size="sm" onClick={() => setShowTracker((v) => !v)}>
@@ -151,13 +156,37 @@ export default function MonitoringPage() {
             ) : (
               <div className="aspect-video flex flex-col items-center justify-center gap-3"
                 style={{ background: "var(--color-surface-muted)" }}>
-                <div className="text-5xl">👁️</div>
+                <div
+                  className="grid place-items-center w-16 h-16 rounded-2xl"
+                  style={{ background: "var(--color-kids-purple-light)" }}
+                >
+                  <Camera className="w-8 h-8" style={{ color: "var(--color-kids-purple-mid)" }} />
+                </div>
                 <p className="text-sm font-semibold" style={{ color: "var(--color-text-muted)" }}>
                   Aktifkan kamera untuk tracking fokus real-time
                 </p>
               </div>
             )}
           </Card>
+
+          {/* Live status banner */}
+          {isActiveSession ? (
+            <div
+              className="flex items-center gap-3 px-4 py-3 rounded-[var(--radius-lg)] text-sm font-semibold"
+              style={{ background: "var(--color-kids-mint-light)", color: "var(--color-kids-mint-mid)" }}
+            >
+              <span className="w-2 h-2 rounded-full bg-green-500 animate-pulse shrink-0" />
+              AI Vision aktif · data diperbarui dari halaman belajar
+            </div>
+          ) : (
+            <div
+              className="flex items-center gap-3 px-4 py-3 rounded-[var(--radius-lg)] text-sm"
+              style={{ background: "var(--color-surface-muted)", color: "var(--color-text-muted)" }}
+            >
+              <span className="w-2 h-2 rounded-full shrink-0" style={{ background: "var(--color-text-subtle)" }} />
+              Data AI Vision tersedia saat sesi belajar aktif
+            </div>
+          )}
 
           <div className="grid grid-cols-2 gap-4">
             <Card className="p-5 flex items-center gap-4">
@@ -186,6 +215,22 @@ export default function MonitoringPage() {
               </div>
             </Card>
           </div>
+
+          {/* Session chart in left column */}
+          {selectedSessionId && (
+            <Card className="p-5">
+              <div className="text-xs font-bold mb-3 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                Grafik Fokus Sesi
+                {isActiveSession && (
+                  <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEE2E2", color: "#EF4444" }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+                    Live
+                  </span>
+                )}
+              </div>
+              <MiniChart logs={isActiveSession ? [] : logs} />
+            </Card>
+          )}
         </div>
 
         {/* Right column */}
@@ -220,8 +265,14 @@ export default function MonitoringPage() {
 
           {selectedSessionId && (
             <Card className="p-4">
-              <div className="text-xs font-bold mb-3" style={{ color: "var(--color-text-muted)" }}>
-                Grafik Fokus {isActiveSession ? "· Live 🔴" : ""}
+              <div className="text-xs font-bold mb-3 flex items-center gap-2" style={{ color: "var(--color-text-muted)" }}>
+                Grafik Fokus
+                {isActiveSession && (
+                  <span className="flex items-center gap-1 text-[10px] font-bold px-2 py-0.5 rounded-full" style={{ background: "#FEE2E2", color: "#EF4444" }}>
+                    <span className="w-1.5 h-1.5 rounded-full bg-red-500 animate-pulse inline-block" />
+                    Live
+                  </span>
+                )}
               </div>
               <MiniChart logs={isActiveSession ? [] : logs} />
             </Card>

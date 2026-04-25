@@ -2,14 +2,15 @@
 
 import { use, useEffect, useRef, useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowLeft, ChevronLeft, ChevronRight, X, Check } from "lucide-react";
+import { ArrowLeft, ChevronLeft, ChevronRight, X, Check, Camera, CameraOff, Eye } from "lucide-react";
 import { motion, AnimatePresence } from "framer-motion";
+import dynamic from "next/dynamic";
 import { Button } from "@/components/ui/Button";
 import { Card } from "@/components/ui/Card";
 import { getModuleBySlug } from "@/lib/modules/data";
-import { usePiP } from "@/context/PiPContext";
 import { useSession } from "@/context/SessionContext";
 import { useAuth } from "@/context/AuthContext";
+import { useBiometric } from "@/context/BiometricContext";
 import { getChildren } from "@/lib/api/children";
 import { DISABILITY_LABELS } from "@/types/child";
 import { INSTRUCTION_LABELS } from "@/types/session";
@@ -17,49 +18,23 @@ import type { Child } from "@/types/child";
 import type { OverloadStatus } from "@/types/session";
 import { cn } from "@/lib/utils/cn";
 
+const VisionTracker = dynamic(() => import("@/components/VisionTracker"), { ssr: false });
+
 const OVERLOAD_COLORS: Record<OverloadStatus, string> = {
   STABLE: "border-[var(--color-focus-high)] bg-green-50",
   WARNING: "border-[var(--color-focus-medium)] bg-yellow-50",
   OVERLOAD: "border-[var(--color-focus-low)] bg-red-50",
 };
 
-// Simulates behavioral data stream during a session
-function useBehaviorSimulator(active: boolean, onLog: (score: number, gaze: string, status: OverloadStatus) => void) {
-  const intervalRef = useRef<ReturnType<typeof setInterval> | null>(null);
-
-  useEffect(() => {
-    if (!active) {
-      if (intervalRef.current) clearInterval(intervalRef.current);
-      return;
-    }
-    const GAZES = ["center", "left", "right", "down", "up"];
-    let tick = 0;
-    intervalRef.current = setInterval(() => {
-      tick++;
-      // Simulate focus dropping every ~60s then recovering
-      const phase = Math.floor(tick / 12) % 4;
-      let score: number;
-      let status: OverloadStatus;
-      if (phase === 0) { score = 0.75 + Math.random() * 0.2; status = "STABLE"; }
-      else if (phase === 1) { score = 0.45 + Math.random() * 0.2; status = "WARNING"; }
-      else if (phase === 2) { score = 0.2 + Math.random() * 0.2; status = "OVERLOAD"; }
-      else { score = 0.6 + Math.random() * 0.3; status = "STABLE"; }
-      const gaze = GAZES[Math.floor(Math.random() * GAZES.length)];
-      onLog(score, gaze, status);
-    }, 5000);
-
-    return () => { if (intervalRef.current) clearInterval(intervalRef.current); };
-  }, [active, onLog]);
-}
-
 export default function LearnPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = use(params);
   const m = getModuleBySlug(id);
   const router = useRouter();
   const { user } = useAuth();
-  const { open, close } = usePiP();
   const { activeSession, activeChild, prompts, begin, finish, logBehavior, acknowledgePrompt } = useSession();
+  const { biometric } = useBiometric();
   const [step, setStep] = useState(0);
+  const [showTracker, setShowTracker] = useState(false);
 
   // Child selector state
   const [children, setChildren] = useState<Child[]>([]);
@@ -79,15 +54,20 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     });
   }, [user, activeSession]);
 
-  // PiP lifecycle
+  // Auto-show AI Vision tracker when session starts
   useEffect(() => {
-    if (!sessionStarted) return;
-    open();
-    return () => { close(); };
-  }, [sessionStarted, open, close]);
+    setShowTracker(sessionStarted);
+  }, [sessionStarted]);
 
-  // Behavior simulation
-  useBehaviorSimulator(sessionStarted, logBehavior);
+  // Bridge real biometric data → session behavioral logs
+  useEffect(() => {
+    if (!sessionStarted || biometric.engagementScore === null) return;
+    const status: OverloadStatus =
+      biometric.engagementScore >= 0.65 ? "STABLE"
+      : biometric.engagementScore >= 0.38 ? "WARNING"
+      : "OVERLOAD";
+    logBehavior(biometric.engagementScore, biometric.gazeDirection ?? "unknown", status);
+  }, [biometric.lastUpdatedAt]); // eslint-disable-line react-hooks/exhaustive-deps
 
   async function handleStartSession() {
     const child = children.find((c) => c.id === selectedChildId);
@@ -230,6 +210,101 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           )}
         </AnimatePresence>
       </main>
+
+      {/* Floating VisionTracker — only when session is active */}
+      <AnimatePresence>
+        {sessionStarted && (
+          <motion.div
+            initial={{ opacity: 0, y: 20, scale: 0.95 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 20, scale: 0.95 }}
+            transition={{ duration: 0.25 }}
+            className="fixed bottom-24 left-5 z-40 flex flex-col"
+            style={{ width: showTracker ? 240 : "auto" }}
+          >
+            {showTracker && (
+              <motion.div
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+                transition={{ duration: 0.2 }}
+                className="rounded-t-[var(--radius-lg)] overflow-hidden shadow-[var(--shadow-lg)]"
+                style={{ background: "#0f172a" }}
+              >
+                {/* Engagement bar at top */}
+                <div
+                  className="flex items-center justify-between px-3 py-1.5"
+                  style={{ background: "rgba(255,255,255,0.06)" }}
+                >
+                  <div className="flex items-center gap-1.5">
+                    <span className="w-1.5 h-1.5 rounded-full bg-green-400 animate-pulse" />
+                    <span className="text-[10px] font-bold text-white/70">AI Vision</span>
+                  </div>
+                  {biometric.engagementScore !== null && (
+                    <span
+                      className="text-[10px] font-extrabold px-2 py-0.5 rounded-full"
+                      style={{
+                        background:
+                          biometric.engagementScore >= 0.65
+                            ? "var(--color-focus-high)"
+                            : biometric.engagementScore >= 0.38
+                            ? "var(--color-focus-medium)"
+                            : "var(--color-focus-low)",
+                        color: "white",
+                      }}
+                    >
+                      Fokus {Math.round(biometric.engagementScore * 100)}%
+                    </span>
+                  )}
+                </div>
+                {/* Camera feed */}
+                <div style={{ height: 135 }}>
+                  <VisionTracker />
+                </div>
+              </motion.div>
+            )}
+
+            {/* Toggle button */}
+            <button
+              onClick={() => setShowTracker((v) => !v)}
+              className="flex items-center gap-2 px-3 py-2 rounded-b-[var(--radius-lg)] text-xs font-bold shadow-[var(--shadow-md)] transition-colors"
+              style={{
+                background: showTracker ? "#1e293b" : "var(--color-kids-purple-mid)",
+                color: "white",
+                borderTopLeftRadius: showTracker ? 0 : undefined,
+                borderTopRightRadius: showTracker ? 0 : undefined,
+                borderRadius: showTracker ? "0 0 var(--radius-lg) var(--radius-lg)" : "var(--radius-lg)",
+              }}
+            >
+              {showTracker ? (
+                <><CameraOff className="w-3.5 h-3.5" /> Tutup Kamera</>
+              ) : (
+                <><Camera className="w-3.5 h-3.5" /> AI Vision</>
+              )}
+            </button>
+          </motion.div>
+        )}
+      </AnimatePresence>
+
+      {/* Focus level indicator pill — shown when tracker is on */}
+      <AnimatePresence>
+        {sessionStarted && showTracker && biometric.focusLevel && biometric.focusLevel !== "unknown" && (
+          <motion.div
+            initial={{ opacity: 0, x: -10 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -10 }}
+            className="fixed bottom-24 left-[260px] z-40 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-[11px] font-bold shadow-[var(--shadow-sm)]"
+            style={{
+              background: "white",
+              border: "1px solid var(--color-border)",
+              color: "var(--color-text-muted)",
+            }}
+          >
+            <Eye className="w-3.5 h-3.5" style={{ color: "var(--color-kids-purple-mid)" }} />
+            <span className="capitalize">{biometric.gazeDirection ?? "—"}</span>
+          </motion.div>
+        )}
+      </AnimatePresence>
 
       {/* Footer nav */}
       <footer className="bg-white border-t border-[var(--color-border)] px-6 h-20 flex items-center justify-between">
