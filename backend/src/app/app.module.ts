@@ -5,10 +5,11 @@ import { AppService } from './app.service';
 import { AuthModule } from '../auth/auth.module';
 import { PrismaModule } from '../prisma/prisma.module';
 import { ChildrenModule } from '../children/children.module';
+import { SessionsModule } from '../sessions/sessions.module';
 
 @Module({
   // Tambahkan ke dalam array imports
-  imports: [AuthModule, PrismaModule, ChildrenModule],
+  imports: [AuthModule, PrismaModule, ChildrenModule, SessionsModule],
   controllers: [AppController],
   providers: [AppService],
 })
