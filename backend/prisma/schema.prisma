@@ -1,9 +1,6 @@
 // This is your Prisma schema file,
 // learn more about it in the docs: https://pris.ly/d/prisma-schema
 
-// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
-// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
-
 generator client {
   provider = "prisma-client-js"
 }
@@ -37,6 +34,12 @@ enum InstructionType {
   BREAK
 }
 
+// 1. TAMBAHKAN ENUM ROLE DI SINI
+enum Role {           // <-- TAMBAHKAN INI
+  PARENT              // <-- TAMBAHKAN INI
+  ADMIN               // <-- TAMBAHKAN INI
+}                     // <-- TAMBAHKAN INI
+
 // --- Model Inti ---
 
 model User {
@@ -44,6 +47,10 @@ model User {
   email     String   @unique
   name      String
   password  String 
+  
+  // 2. TAMBAHKAN KOLOM ROLE DI SINI
+  role      Role     @default(PARENT) 
+
   children  Child[]
   createdAt DateTime @default(now())
 }
