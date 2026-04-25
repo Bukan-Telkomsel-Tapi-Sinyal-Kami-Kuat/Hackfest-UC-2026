@@ -7,6 +7,7 @@ from langchain_community.document_loaders import DirectoryLoader, TextLoader
 from langchain_text_splitters import MarkdownHeaderTextSplitter, RecursiveCharacterTextSplitter
 from langchain_openai import OpenAIEmbeddings
 from langchain_community.vectorstores import Chroma
+from langchain_ollama import OllamaEmbeddings
 import frontmatter  # pip install python-frontmatter
 
 load_dotenv()
@@ -28,7 +29,7 @@ def load_documents():
             "disability_tags": ",".join(post.get("disability_tags", [])),
             "source":          str(filepath),
         }
-        from langchain.schema import Document
+        from langchain_core.documents import Document
         docs.append(Document(page_content=post.content, metadata=metadata))
     print(f"Loaded {len(docs)} documents")
     return docs
@@ -46,10 +47,10 @@ def chunk_documents(docs):
 
 def build_vectorstore(chunks):
     """Embed chunks dan simpan ke ChromaDB"""
-    embeddings = OpenAIEmbeddings(model="text-embedding-3-small")
+    embeddings = OllamaEmbeddings(model="gemma4:e4b")
     vectorstore = Chroma.from_documents(
         documents=chunks,
-        embedding=embeddings,
+        embedding=OllamaEmbeddings(model="nomic-embed-text"),
         persist_directory=CHROMA_PATH,
         collection_name="adaptive_learning",
     )
