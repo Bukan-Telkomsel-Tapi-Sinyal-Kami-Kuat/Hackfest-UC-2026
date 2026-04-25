@@ -1,20 +1,24 @@
 import { Module } from '@nestjs/common';
 import { JwtModule } from '@nestjs/jwt';
+import { PassportModule } from '@nestjs/passport'; // <-- 1. Import PassportModule
 import { AuthService } from './auth.service';
 import { AuthController } from './auth.controller';
 import { PrismaModule } from '../prisma/prisma.module';
+import { JwtStrategy } from './jwt.strategy';
 
 @Module({
   imports: [
-    PrismaModule, // Wajib di-import agar AuthService bisa memakai PrismaService
+    PrismaModule,
+    PassportModule, // <-- 2. Daftarkan di sini
     JwtModule.register({
-      global: true, // Membuat JWT module tersedia secara global (tidak perlu import berulang)
-      secret: process.env.JWT_SECRET || 'KODE_RAHASIA_HACKATHON_SENSEIHOME', // Di prod, wajib pakai .env
-      signOptions: { expiresIn: '1d' }, // Token berlaku selama 1 hari
+      global: true,
+      secret: 'KODE_RAHASIA_HACKATHON', // <-- Ubah jadi persis seperti ini
+      signOptions: { expiresIn: '1d' },
     }),
   ],
   controllers: [AuthController],
-  providers: [AuthService],
-  exports: [AuthService],
+  providers: [AuthService, JwtStrategy],
+  // 3. Tambahkan JwtStrategy dan PassportModule di exports
+  exports: [AuthService, JwtStrategy, PassportModule], 
 })
 export class AuthModule {}
