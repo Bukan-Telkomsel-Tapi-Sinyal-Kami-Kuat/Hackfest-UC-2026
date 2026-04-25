@@ -5,6 +5,7 @@ import { AuthProvider } from "@/context/AuthContext";
 import { AuthModalProvider } from "@/context/AuthModalContext";
 import { BiometricProvider } from "@/context/BiometricContext";
 import { PiPProvider } from "@/context/PiPContext";
+import { SessionProvider } from "@/context/SessionContext";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { PiPMonitor } from "@/components/monitoring/PiPMonitor";
 
@@ -36,7 +37,9 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
           <AuthModalProvider>
             <BiometricProvider>
               <PiPProvider>
-                {children}
+                <SessionProvider>
+                  {children}
+                </SessionProvider>
                 <AuthModal />
                 <PiPMonitor />
               </PiPProvider>

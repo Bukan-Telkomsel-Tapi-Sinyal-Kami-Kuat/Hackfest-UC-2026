@@ -1,7 +1,10 @@
+export type UserRole = "PARENT" | "ADMIN";
+
 export interface User {
   id: string;
   email: string;
   name: string;
+  role: UserRole;
   avatar?: string;
   createdAt: number;
 }

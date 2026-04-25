@@ -2,6 +2,8 @@ export type FocusLevel = "high" | "medium" | "low" | "unknown";
 
 export interface BiometricState {
   focusLevel: FocusLevel;
+  engagementScore: number | null;
+  gazeDirection: string;
   gazeX: number | null;
   gazeY: number | null;
   eyeOpenness: number | null;
@@ -15,6 +17,8 @@ export interface BiometricState {
 
 export const DEFAULT_BIOMETRIC_STATE: BiometricState = {
   focusLevel: "unknown",
+  engagementScore: null,
+  gazeDirection: "unknown",
   gazeX: null,
   gazeY: null,
   eyeOpenness: null,

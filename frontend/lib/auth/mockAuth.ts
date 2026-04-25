@@ -41,8 +41,25 @@ function delay(ms: number) {
   return new Promise((r) => setTimeout(r, ms));
 }
 
+// Seed demo admin account on first run
+function ensureDemoAccounts() {
+  const reg = readRegistry();
+  if (!reg["admin@visea.id"]) {
+    const admin: User = {
+      id: "u_admin_demo",
+      email: "admin@visea.id",
+      name: "Admin VISEA",
+      role: "ADMIN",
+      createdAt: Date.now(),
+    };
+    reg["admin@visea.id"] = { user: admin, password: "admin123" };
+    writeRegistry(reg);
+  }
+}
+
 export async function mockSignIn(email: string, password: string): Promise<AuthResult> {
   await delay(400);
+  if (typeof window !== "undefined") ensureDemoAccounts();
   const reg = readRegistry();
   const entry = reg[email.toLowerCase()];
   if (!entry || entry.password !== password) {
@@ -67,6 +84,7 @@ export async function mockSignUp(
     id: `u_${Date.now()}`,
     email,
     name,
+    role: "PARENT",
     createdAt: Date.now(),
   };
   reg[key] = { user, password };
@@ -81,6 +99,7 @@ export async function mockSignInWithGoogle(): Promise<AuthResult> {
     id: "u_google_demo",
     email: "demo@google.com",
     name: "Demo User",
+    role: "PARENT",
     avatar: "https://lh3.googleusercontent.com/a/default-user=s64",
     createdAt: Date.now(),
   };
