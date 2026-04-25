@@ -1,26 +1,30 @@
 # rag/schemas.py
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
+from typing import Literal
+
 
 class Exercise(BaseModel):
     question: str
-    options: list[str] | None = None   # None kalau open-ended
-    answer: str
-    hint: str
+    options:  list[str] | None = None
+    answer:   str
+    hint:     str
+
 
 class GeneratedModule(BaseModel):
-    topic: str
-    grade: int
-    disability_mode: str
-    difficulty: int
-    content: str           # Penjelasan materi utama
-    content_audio_hint: str  # Versi pendek untuk TTS (tunanetra/disleksia)
-    exercises: list[Exercise]
-    parent_guidance: str   # Tips untuk orang tua
+    topic:              str
+    grade:              int
+    disability_mode:    str
+    difficulty:         int
+    content:            str
+    content_audio_hint: str = ""
+    exercises:          list[Exercise]
+    parent_guidance:    str = ""
+
 
 class ModuleRequest(BaseModel):
-    topic: str
-    grade: int
-    disability_mode: str   # "tunanetra" | "tunarungu" | "disleksia"
-    difficulty: int = 3    # 1=sangat mudah, 5=sulit
-    emotion_state: str = "engaged"  # akan dipakai di Tahap 2
-    child_name: str = "Adik"
+    topic:           str
+    grade:           int = Field(default=1, ge=1, le=6)
+    disability_mode: Literal["tunanetra", "tunarungu", "disleksia"]
+    difficulty:      int = Field(default=3, ge=1, le=5)
+    emotion_state:   Literal["overwhelmed", "confused", "engaged", "bored"] = "engaged"
+    child_name:      str = "Adik"
