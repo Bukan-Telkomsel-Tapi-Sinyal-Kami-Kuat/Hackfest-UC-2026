@@ -1,241 +1,236 @@
-# Hackfest-UC-2026
+# VISEA — Adaptive Learning Platform for Children with Special Needs
 
-🚀 Repository resmi untuk Hackfest UC 2026 - Hackathon inovatif dengan fokus pada teknologi terkini dan kolaborasi tim.
+## Description
 
-## 📋 Daftar Isi
+VISEA is a real-time adaptive learning platform designed for children with special educational needs (autism, ADHD, Down Syndrome, dyslexia, etc.). It uses computer vision to continuously measure a child's engagement and detect sensory overload, then responds with AI-generated guidance for parents and dynamically adjusted learning content.
 
-- [Tentang Proyek](#tentang-proyek)
-- [Stack Teknologi](#stack-teknologi)
-- [Struktur Proyek](#struktur-proyek)
-- [Instalasi](#instalasi)
-- [Cara Menjalankan](#cara-menjalankan)
-- [Kontribusi](#kontribusi)
-- [Tim](#tim)
-- [Lisensi](#lisensi)
+**Problem:** Children with special needs require constant, personalized adaptation during learning sessions — something human caregivers struggle to do consistently.
 
-## 🎯 Tentang Proyek
-
-Hackfest UC 2026 adalah sebuah hackathon yang dirancang untuk:
-- Mengembangkan solusi inovatif menggunakan teknologi modern
-- Mendorong kolaborasi dan kreativitas dalam tim
-- Membangun produk yang dapat memberikan dampak nyata
-- Berbagi pengetahuan dan best practices dalam development
-
-Proyek ini dibangun dengan arsitektur modern fullstack menggunakan teknologi TypeScript di kedua sisi (frontend dan backend).
-
-## 💻 Stack Teknologi
-
-### Backend
-- **Framework**: NestJS - Progressive Node.js framework
-- **Language**: TypeScript
-- **Runtime**: Node.js
-
-### Frontend
-- **Framework**: Next.js - React framework modern
-- **Language**: TypeScript
-- **Features**: App Router, Server Components, Optimization
-
-### Umum
-- **Version Control**: Git & GitHub
-- **Package Manager**: npm/yarn
-
-## 📁 Struktur Proyek
-
-```
-Hackfest-UC-2026/
-├── backend/              # NestJS Application
-│   ├── src/
-│   ├── test/
-│   ├── package.json
-│   └── README.md
-├── frontend/             # Next.js Application
-│   ├── app/
-│   ├── public/
-│   ├── package.json
-│   └── README.md
-├── README.md             # Dokumentasi utama (file ini)
-└── .gitignore
-```
-
-## 🚀 Instalasi
-
-### Prerequisites
-- Node.js (v16 atau lebih tinggi)
-- npm atau yarn
-- Git
-
-### Backend Setup
-
-```bash
-cd backend
-npm install
-```
-
-### Frontend Setup
-
-```bash
-cd frontend
-npm install
-```
-
-## 🏃 Cara Menjalankan
-
-### Menjalankan Backend (NestJS)
-
-```bash
-cd backend
-
-# Development mode
-npm run start
-
-# Watch mode (hot reload)
-npm run start:dev
-
-# Production mode
-npm run start:prod
-```
-
-Backend akan berjalan di `http://localhost:3001` (atau port yang dikonfigurasi)
-
-### Menjalankan Frontend (Next.js)
-
-```bash
-cd frontend
-
-# Development mode
-npm run dev
-```
-
-Frontend akan berjalan di `http://localhost:3000`
-
-### Menjalankan Testing
-
-**Backend:**
-```bash
-cd backend
-
-# Unit tests
-npm run test
-
-# E2E tests
-npm run test:e2e
-
-# Test coverage
-npm run test:cov
-```
-
-**Frontend:**
-```bash
-cd frontend
-
-# Development dengan testing
-npm run dev
-```
-
-## 🧪 Testing
-
-### Backend Testing
-Proyek backend menggunakan Jest untuk unit testing dan e2e testing.
-
-```bash
-cd backend
-npm run test          # Jalankan semua tests
-npm run test:watch   # Watch mode
-npm run test:cov     # Coverage report
-```
-
-## 🔧 Environment Variables
-
-Buat file `.env` di direktori backend dan frontend sesuai kebutuhan:
-
-### Backend (.env)
-```
-NODE_ENV=development
-PORT=3001
-DATABASE_URL=your_database_url
-```
-
-### Frontend (.env.local)
-```
-NEXT_PUBLIC_API_URL=http://localhost:3001
-```
-
-## 📦 Deployment
-
-### Backend Deployment
-Ikuti dokumentasi NestJS: [NestJS Deployment Guide](https://docs.nestjs.com/deployment)
-
-### Frontend Deployment
-Ikuti dokumentasi Next.js: [Next.js Deployment Guide](https://nextjs.org/docs/app/building-your-application/deploying)
-
-Rekomendasi platform:
-- **Backend**: Heroku, AWS, DigitalOcean, Railway
-- **Frontend**: Vercel, Netlify, AWS Amplify
-
-## 🤝 Kontribusi
-
-Kami menyambut kontribusi dari semua anggota tim! Silakan ikuti langkah-langkah berikut:
-
-1. **Fork** repository ini
-2. Buat **branch** fitur Anda (`git checkout -b feature/AmazingFeature`)
-3. **Commit** perubahan Anda (`git commit -m 'Add some AmazingFeature'`)
-4. **Push** ke branch (`git push origin feature/AmazingFeature`)
-5. Buat **Pull Request**
-
-### Git Workflow
-- Main branch: `main` (production-ready code)
-- Development branch: `develop` (integration branch)
-- Feature branches: `feature/*`
-- Bug fix branches: `bugfix/*`
-- Release branches: `release/*`
-
-## 👥 Tim
-
-Tim Hackfest UC 2026:
-- **Backend Lead**: [Nama Backend Developer]
-- **Frontend Lead**: [Nama Frontend Developer]
-- **Product Manager**: [Nama PM]
-- **Designer**: [Nama Designer]
-
-## 📝 Dokumentasi
-
-- [Backend README](./backend/README.md) - Dokumentasi lengkap untuk backend
-- [Frontend README](./frontend/README.md) - Dokumentasi lengkap untuk frontend
-- [NestJS Documentation](https://docs.nestjs.com)
-- [Next.js Documentation](https://nextjs.org/docs)
-
-## 🐛 Troubleshooting
-
-### Backend Issues
-- Port sudah digunakan: Ubah PORT di `.env`
-- Database connection error: Periksa DATABASE_URL di `.env`
-- Dependencies error: Jalankan `npm install` atau `npm ci`
-
-### Frontend Issues
-- Build error: Hapus `.next` folder dan jalankan `npm run dev` lagi
-- API connection error: Periksa NEXT_PUBLIC_API_URL di `.env.local`
-
-## 📚 Resources
-
-- [NestJS Docs](https://docs.nestjs.com) - Documentation
-- [NestJS Discord](https://discord.gg/G7Qnnhy) - Community support
-- [Next.js Docs](https://nextjs.org/docs) - Documentation
-- [Next.js Learn](https://nextjs.org/learn) - Interactive tutorial
-- [TypeScript Handbook](https://www.typescriptlang.org/docs/) - TypeScript reference
-
-## 📄 Lisensi
-
-Proyek ini dilisensikan di bawah MIT License - lihat file [LICENSE](LICENSE) untuk detail lebih lanjut.
-
-## 📞 Kontak & Support
-
-Untuk pertanyaan atau dukungan, silakan:
-- Buka [GitHub Issues](https://github.com/Bukan-Telkomsel-Tapi-Sinyal-Kami-Kuat/Hackfest-UC-2026/issues)
-- Hubungi tim development
-- Buat diskusi di repository ini
+**Solution:** A three-layer system: real-time behavioral monitoring via webcam, AI-generated parent instructions via Google Gemini, and adaptive educational modules via local LLM (Ollama) with RAG retrieval.
 
 ---
 
-**Made with ❤️ by Hackfest UC 2026 Team**
+## Features
 
-*Last Updated: 2026-04-25*
+### Implemented
+
+- **User authentication** — JWT-based login/signup, role-based access (PARENT / ADMIN)
+- **Child profile management** — Create profiles with disability type, linked to parent account
+- **Real-time session tracking** — Start/end sessions, calculate average engagement score
+- **Computer vision monitoring** — MediaPipe Face Landmarker: gaze direction, eye aspect ratio, engagement score, overload status
+- **Live behavioral logging** — WebSocket (Socket.io) streams metrics from frontend to backend continuously
+- **AI instruction generation** — Google Gemini 1.5 Flash triggered on overload or low engagement; outputs 1-sentence actionable parent guidance enriched with RAG medical context
+- **Adaptive learning modules** — Local Ollama (Gemma 3 4B) generates lessons customized by topic, grade, disability mode, difficulty, and detected emotion state
+- **RAG knowledge base** — ChromaDB vector store with educational corpus + seeded medical guidelines per disability type
+- **Parent dashboard** — Manage children, view session history, real-time metric visualization
+- **Picture-in-Picture monitor** — Floating camera overlay showing live vision metrics during lesson
+- **Load testing script** — Simulates 50 concurrent Socket.io connections
+
+### Planned / In Progress
+
+- **Admin panel** — Full CRUD for RAG reference materials (backend skeleton exists)
+- **Frontend–backend API integration** — Frontend currently uses localStorage mock; real API clients need wiring
+- **Parent acknowledgment flow** — UI for confirming AI instructions followed (DB field exists, UI incomplete)
+- **Micro-expression detection** — Field exists in DB schema; MediaPipe extraction not yet implemented
+- **Progress analytics** — Long-term engagement trends, mastery tracking
+- **Audio/visual card rendering** — `audio_hint` field generated by LLM, not yet surfaced in UI
+- **Export/reporting** — Session summaries and progress reports
+
+---
+
+## Tech Stack
+
+### Frontend
+| Package | Purpose |
+|---|---|
+| Next.js 16.2 + React 19 | App framework, routing |
+| TypeScript | Type safety |
+| Tailwind CSS 4 | Styling |
+| Framer Motion | Animations |
+| MediaPipe Vision | Computer vision (face landmarks, gaze) |
+| Socket.io-client | Real-time session streaming |
+| Zod | Schema validation |
+
+### Backend
+| Package | Purpose |
+|---|---|
+| NestJS 11 | REST API + WebSocket server |
+| TypeScript | Type safety |
+| Prisma ORM | Database abstraction |
+| PostgreSQL | Primary database |
+| Socket.io | Real-time behavioral log ingestion |
+| Google Gemini API | Parent-facing AI instruction generation |
+| Passport + JWT | Authentication |
+| bcrypt | Password hashing |
+
+### AI / RAG Service
+| Package | Purpose |
+|---|---|
+| FastAPI | Python REST API |
+| Ollama (Gemma 3 4B) | Local LLM for module generation |
+| ChromaDB | Vector database for corpus retrieval |
+| LangChain | RAG pipeline orchestration |
+| Nomic Embed Text | Embedding model (384-dim) |
+
+### Database
+- **PostgreSQL** — Users, children, sessions, behavioral logs, AI instructions, RAG references
+- **ChromaDB** — Vector store for educational corpus (Markdown files with frontmatter metadata)
+
+---
+
+## Project Structure
+
+```
+Hackfest-UC-2026/
+├── backend/                    # NestJS API + WebSocket server
+│   ├── src/
+│   │   ├── auth/               # JWT auth, guards, strategies
+│   │   ├── children/           # Child profile CRUD
+│   │   ├── sessions/           # Session lifecycle + AI trigger + WebSocket gateway
+│   │   ├── rag-reference/      # Admin knowledge base endpoint
+│   │   └── prisma/             # Prisma service wrapper
+│   └── prisma/
+│       ├── schema.prisma       # DB schema (User, Child, Session, BehavioralLog, ParentPrompt, RAGReference)
+│       └── seed.ts             # Seeds RAGReference medical guidelines
+│
+├── frontend/                   # Next.js parent-facing app
+│   ├── app/
+│   │   ├── (public)/           # Landing page, module viewer
+│   │   └── (authed)/           # Protected dashboard, monitoring, session pages
+│   ├── components/
+│   │   └── VisionTracker.tsx   # Core MediaPipe integration (CV engine)
+│   ├── context/                # Auth, Session, Biometric React contexts
+│   └── lib/                    # API clients, utility functions
+│
+├── ai-rag/                     # Python FastAPI adaptive content service
+│   ├── rag/
+│   │   ├── generator.py        # LLM module generation pipeline
+│   │   ├── retriever.py        # ChromaDB similarity search
+│   │   ├── ingestor.py         # Corpus ingestion into ChromaDB
+│   │   └── schemas.py          # Pydantic request/response models
+│   ├── data/corpus/            # Markdown educational materials (Math, Science, Indonesian)
+│   └── main.py                 # FastAPI entrypoint
+│
+└── load-test.js                # Socket.io concurrent connection stress test
+```
+
+---
+
+## Setup & Installation
+
+### Prerequisites
+
+- Node.js ≥ 18
+- Python ≥ 3.10
+- PostgreSQL running locally
+- [Ollama](https://ollama.com) installed and running (`ollama serve`)
+- Ollama models pulled: `ollama pull gemma3:4b && ollama pull nomic-embed-text`
+
+### 1. Backend
+
+```bash
+cd backend
+npm install
+
+# Create .env with:
+# DATABASE_URL=postgresql://user:password@localhost:5432/visea_db
+# DIRECT_URL=postgresql://user:password@localhost:5432/visea_db
+# GEMINI_API_KEY=your_google_gemini_api_key
+# PORT=3000
+
+npx prisma migrate deploy
+npx prisma db seed
+npm run start:dev
+```
+
+### 2. Frontend
+
+```bash
+cd frontend
+npm install
+
+# Create .env.local with:
+# NEXT_PUBLIC_BACKEND_URL=http://localhost:3000
+# NEXT_PUBLIC_AI_RAG_URL=http://localhost:8000
+
+npm run dev       # Runs on :3067
+```
+
+### 3. AI/RAG Service
+
+```bash
+cd ai-rag
+pip install fastapi uvicorn langchain chromadb ollama pydantic
+
+# Ingest corpus into ChromaDB (first time only)
+python -m rag.ingestor
+
+python main.py    # Runs on :8000
+```
+
+---
+
+## Usage
+
+1. Open `http://localhost:3067` — register as a PARENT
+2. Add a child profile (name, birth date, disability type)
+3. Start a learning session from the dashboard
+4. Grant webcam permission — MediaPipe begins tracking gaze and engagement
+5. Monitoring panel shows live: engagement score, gaze direction, focus level, overload status
+6. When overload is detected, Gemini generates a parent instruction displayed in the session panel
+7. Navigate to a learning module — RAG service generates adaptive content based on topic + child's disability mode
+
+---
+
+## Current Progress
+
+| Component | Status |
+|---|---|
+| Backend API (auth, children, sessions) | Complete |
+| Database schema + migrations + seed | Complete |
+| Real-time WebSocket behavioral logging | Complete |
+| Gemini AI instruction generation | Complete |
+| Computer vision (gaze, EAR, engagement) | Complete |
+| RAG corpus + vector DB | Complete |
+| Adaptive module generation (Ollama) | Complete |
+| Frontend dashboard UI | Complete |
+| Frontend ↔ Backend API wiring | Partial (mock auth in localStorage) |
+| Admin panel | Skeleton only |
+| Micro-expression detection | Not started |
+
+---
+
+## Roadmap
+
+- [ ] Replace localStorage mock auth with real backend API calls
+- [ ] Complete admin CRUD UI for RAG knowledge base
+- [ ] Implement micro-expression extraction from MediaPipe landmarks
+- [ ] Surface `audio_hint` field from generated modules as TTS playback
+- [ ] Build parent acknowledgment UI and feedback loop
+- [ ] Add weekly engagement analytics and trend charts
+- [ ] Session export (PDF progress report)
+- [ ] Containerize all three services (Docker Compose)
+
+---
+
+## Architecture Overview
+
+```
+Browser (Parent)
+│
+├── Next.js Frontend (:3067)
+│   ├── MediaPipe (webcam) ──→ engagement/gaze metrics
+│   ├── Socket.io client ────→ streams BehavioralLog to backend
+│   └── REST client ─────────→ auth / children / sessions
+│
+├── NestJS Backend (:3000)
+│   ├── REST API ────────────→ PostgreSQL via Prisma
+│   ├── WebSocket Gateway ───→ receives logs, triggers Gemini
+│   └── Gemini API ──────────→ generates parent instructions
+│
+└── FastAPI AI/RAG (:8000)
+    ├── ChromaDB ────────────→ corpus similarity search
+    └── Ollama (Gemma 3 4B) → generates adaptive learning modules
+```
+
+> **Note:** JWT secret is hardcoded (`'KODE_RAHASIA_HACKATHON'`) for hackathon demo purposes. Replace before any production deployment.
