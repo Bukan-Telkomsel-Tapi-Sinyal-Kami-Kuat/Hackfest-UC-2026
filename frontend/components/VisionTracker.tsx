@@ -69,9 +69,26 @@ export default function VisionTracker() {
   updateRef.current = updateBiometric
 
   useEffect(() => {
-    let faceLandmarker: FaceLandmarker
+    let faceLandmarker: FaceLandmarker | null = null
     let animationFrameId: number
     let lastVideoTime = -1
+
+    // FLAG KRUSIAL: Mencegah Race Condition di React Strict Mode
+    let isActive = true
+
+    // Suppress MediaPipe/TF Lite WASM noise for entire component lifetime
+    // (covers both init and per-frame detectForVideo calls)
+    const NOISE_RE = /XNNPACK|TensorFlow Lite|Created delegate|Falling back|xnnpack/i
+    const _origLog = console.log
+    const _origError = console.error
+    console.log = (...args: unknown[]) => {
+      if (typeof args[0] === 'string' && NOISE_RE.test(args[0])) return
+      _origLog(...args)
+    }
+    console.error = (...args: unknown[]) => {
+      if (typeof args[0] === 'string' && NOISE_RE.test(args[0])) return
+      _origError(...args)
+    }
 
     const initializeMediaPipe = async () => {
       try {
@@ -79,7 +96,7 @@ export default function VisionTracker() {
           'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
         )
 
-        faceLandmarker = await FaceLandmarker.createFromOptions(vision, {
+        const fl = await FaceLandmarker.createFromOptions(vision, {
           baseOptions: {
             modelAssetPath:
               'https://storage.googleapis.com/mediapipe-models/face_landmarker/face_landmarker/float16/1/face_landmarker.task',
@@ -90,20 +107,27 @@ export default function VisionTracker() {
           numFaces: 1,
         })
 
+        // GUARD: Hentikan jika komponen sudah di-unmount
+        if (!isActive) {
+          fl.close()
+          return
+        }
+
+        faceLandmarker = fl
         setIsModelLoaded(true)
         startCamera()
       } catch (error) {
-        console.error('Error loading MediaPipe model:', error)
+        _origError('Error loading MediaPipe model:', error)
       }
     }
 
     const startCamera = async () => {
-      if (!navigator.mediaDevices?.getUserMedia) return
+      if (!isActive || !navigator.mediaDevices?.getUserMedia) return
       try {
         const stream = await navigator.mediaDevices.getUserMedia({
           video: { width: 640, height: 480, facingMode: 'user' },
         })
-        if (videoRef.current) {
+        if (videoRef.current && isActive) {
           videoRef.current.srcObject = stream
           videoRef.current.addEventListener('loadeddata', predictWebcam)
         }
@@ -113,73 +137,82 @@ export default function VisionTracker() {
     }
 
     const predictWebcam = () => {
-      if (!videoRef.current || !canvasRef.current || !faceLandmarker) return
+      if (!isActive || !videoRef.current || !canvasRef.current || !faceLandmarker) return
 
       const video = videoRef.current
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
 
-      if (video.readyState >= 2 && lastVideoTime !== video.currentTime) {
+      if (video.readyState >= 2 && video.videoWidth > 0 && lastVideoTime !== video.currentTime) {
         lastVideoTime = video.currentTime
         const startTimeMs = performance.now()
-        const results = faceLandmarker.detectForVideo(video, startTimeMs)
+        
+        try {
+          const results = faceLandmarker.detectForVideo(video, startTimeMs)
 
-        if (ctx) {
-          canvas.width = video.videoWidth
-          canvas.height = video.videoHeight
-          ctx.clearRect(0, 0, canvas.width, canvas.height)
+          if (ctx) {
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
 
-          if (results.faceLandmarks?.length) {
-            const lm = results.faceLandmarks[0] as LandmarkPoint[]
+            if (results.faceLandmarks?.length) {
+              const lm = results.faceLandmarks[0] as LandmarkPoint[]
 
-            // Draw blue landmark dots
-            ctx.fillStyle = '#3b82f6'
-            for (const point of lm) {
-              ctx.beginPath()
-              ctx.arc(point.x * canvas.width, point.y * canvas.height, 1.5, 0, 2 * Math.PI)
-              ctx.fill()
+              ctx.fillStyle = '#3b82f6'
+              for (const point of lm) {
+                ctx.beginPath()
+                ctx.arc(point.x * canvas.width, point.y * canvas.height, 1.5, 0, 2 * Math.PI)
+                ctx.fill()
+              }
+
+              const leftEAR = calcEAR(lm, LEFT_EYE)
+              const rightEAR = calcEAR(lm, RIGHT_EYE)
+              const avgEAR = (leftEAR + rightEAR) / 2
+              const eyeOpenness = Math.min(1, Math.max(0, (avgEAR - 0.15) / 0.2))
+
+              const gaze = gazeFromLandmarks(lm)
+              const engagementScore = computeEngagement(avgEAR, gaze.direction)
+              const focusLevel = focusFromEngagement(engagementScore)
+
+              updateRef.current({
+                focusLevel,
+                engagementScore,
+                gazeDirection: gaze.direction,
+                gazeX: gaze.x,
+                gazeY: gaze.y,
+                eyeOpenness,
+                lastUpdatedAt: Date.now(),
+              })
+            } else {
+              updateRef.current({
+                focusLevel: 'unknown',
+                engagementScore: null,
+                gazeDirection: 'unknown',
+                eyeOpenness: null,
+                lastUpdatedAt: Date.now(),
+              })
             }
-
-            // Biometric calculations
-            const leftEAR = calcEAR(lm, LEFT_EYE)
-            const rightEAR = calcEAR(lm, RIGHT_EYE)
-            const avgEAR = (leftEAR + rightEAR) / 2
-            const eyeOpenness = Math.min(1, Math.max(0, (avgEAR - 0.15) / 0.2))
-
-            const gaze = gazeFromLandmarks(lm)
-            const engagementScore = computeEngagement(avgEAR, gaze.direction)
-            const focusLevel = focusFromEngagement(engagementScore)
-
-            updateRef.current({
-              focusLevel,
-              engagementScore,
-              gazeDirection: gaze.direction,
-              gazeX: gaze.x,
-              gazeY: gaze.y,
-              eyeOpenness,
-              lastUpdatedAt: Date.now(),
-            })
-          } else {
-            // No face detected
-            updateRef.current({
-              focusLevel: 'unknown',
-              engagementScore: null,
-              gazeDirection: 'unknown',
-              eyeOpenness: null,
-              lastUpdatedAt: Date.now(),
-            })
           }
+        } catch (err) {
+          console.warn("Skipped frame due to MediaPipe collision:", err)
         }
       }
 
-      animationFrameId = requestAnimationFrame(predictWebcam)
+      if (isActive) {
+        animationFrameId = requestAnimationFrame(predictWebcam)
+      }
     }
 
     initializeMediaPipe()
 
     return () => {
+      isActive = false
+      console.log = _origLog
+      console.error = _origError
       if (animationFrameId) cancelAnimationFrame(animationFrameId)
-      if (faceLandmarker) faceLandmarker.close()
+      if (faceLandmarker) {
+        try { faceLandmarker.close() } catch (_) { /* ignore */ }
+      }
       if (videoRef.current?.srcObject) {
         const stream = videoRef.current.srcObject as MediaStream
         stream.getTracks().forEach((track) => track.stop())

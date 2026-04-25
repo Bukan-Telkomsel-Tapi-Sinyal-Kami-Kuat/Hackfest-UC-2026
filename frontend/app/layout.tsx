@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Plus_Jakarta_Sans, Inter } from "next/font/google";
+import { Nunito, Nunito_Sans } from "next/font/google";
 import "./globals.css";
 import { AuthProvider } from "@/context/AuthContext";
 import { AuthModalProvider } from "@/context/AuthModalContext";
@@ -9,17 +9,17 @@ import { SessionProvider } from "@/context/SessionContext";
 import { AuthModal } from "@/components/auth/AuthModal";
 import { PiPMonitor } from "@/components/monitoring/PiPMonitor";
 
-const jakarta = Plus_Jakarta_Sans({
+const nunito = Nunito({
   subsets: ["latin"],
-  weight: ["500", "600", "700"],
-  variable: "--font-jakarta",
+  weight: ["400", "500", "600", "700", "800", "900"],
+  variable: "--font-nunito",
   display: "swap",
 });
 
-const inter = Inter({
+const nunitoSans = Nunito_Sans({
   subsets: ["latin"],
-  weight: ["400", "500", "600"],
-  variable: "--font-inter",
+  weight: ["400", "600", "700"],
+  variable: "--font-nunito-sans",
   display: "swap",
 });
 
@@ -31,7 +31,7 @@ export const metadata: Metadata = {
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {
   return (
-    <html lang="id" className={`${jakarta.variable} ${inter.variable}`}>
+    <html lang="id" className={`${nunito.variable} ${nunitoSans.variable}`}>
       <body>
         <AuthProvider>
           <AuthModalProvider>
