@@ -83,7 +83,7 @@ export default function AdminModulesPage() {
   if (!user || user.role !== "ADMIN") return null;
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 sm:p-8 max-w-4xl">
       <header className="mb-6 flex items-center justify-between gap-4 flex-wrap">
         <div>
           <h1 className="text-3xl font-extrabold mb-1">Kelola Modul</h1>

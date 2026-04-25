@@ -66,7 +66,9 @@ export function Hero() {
   }, []); // eslint-disable-line react-hooks/exhaustive-deps
 
   return (
-    <section ref={containerRef} className="relative min-h-[93vh] flex items-center justify-center px-6 overflow-hidden">
+    <section ref={containerRef} className="relative min-h-[93vh] flex items-center justify-center px-4 sm:px-6 overflow-hidden"
+      style={{ overflowX: "hidden" }}
+    >
 
       {/* Layer 1 — background blobs */}
       <div ref={layerRefs[0]} className="absolute inset-0 pointer-events-none will-change-transform">
@@ -134,9 +136,9 @@ export function Hero() {
         </motion.div>
 
         {/* Heading */}
-        <h1 className="text-5xl md:text-[4.25rem] font-extrabold leading-[1.06] mb-6" style={{ color: "var(--color-text-primary)" }}>
+        <h1 className="text-4xl sm:text-5xl md:text-[4.25rem] font-extrabold leading-[1.06] mb-6" style={{ color: "var(--color-text-primary)" }}>
           Belajar adaptif,{" "}
-          <span className="relative whitespace-nowrap">
+          <span className="relative inline-block">
             <span style={{ color: "var(--color-kids-purple-dark)" }}>untuk setiap anak.</span>
             {/* Wavy underline */}
             <svg
@@ -157,7 +159,7 @@ export function Hero() {
           </span>
         </h1>
 
-        <p className="text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
+        <p className="text-base sm:text-lg md:text-xl max-w-xl mx-auto mb-10 leading-relaxed" style={{ color: "var(--color-text-muted)" }}>
           VISEA membantu orang tua mendampingi anak berkebutuhan khusus dengan modul belajar yang
           menyesuaikan ekspresi dan fokus anak secara{" "}
           <span className="font-bold" style={{ color: "var(--color-kids-purple-dark)" }}>real-time</span>.

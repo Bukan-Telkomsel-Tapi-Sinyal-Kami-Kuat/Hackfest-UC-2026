@@ -122,7 +122,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
             <span className="font-semibold truncate">{m.title}</span>
             <div className="flex items-center gap-3 flex-shrink-0">
               {activeChild && (
-                <span className="text-[var(--color-blue-700)] font-medium">
+                <span className="hidden sm:inline text-[var(--color-blue-700)] font-medium">
                   {activeChild.name}
                 </span>
               )}
@@ -144,7 +144,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
 
       {/* Main content */}
       <main className="flex-1 grid place-items-center px-6 py-12 relative">
-        <Card className="w-full max-w-2xl p-10 text-center">
+        <Card className="w-full max-w-2xl p-5 sm:p-10 text-center">
           <AnimatePresence mode="wait">
             <motion.div
               key={step}
@@ -169,7 +169,7 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
               initial={{ opacity: 0, x: 40 }}
               animate={{ opacity: 1, x: 0 }}
               exit={{ opacity: 0, x: 40 }}
-              className="fixed bottom-24 right-6 w-80 flex flex-col gap-2 z-50"
+              className="fixed bottom-24 right-3 sm:right-6 w-[calc(100vw-1.5rem)] max-w-xs sm:max-w-none sm:w-80 flex flex-col gap-2 z-50"
             >
               {unacknowledgedPrompts.slice(0, 2).map((p) => (
                 <div

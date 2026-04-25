@@ -121,7 +121,7 @@ export default function MonitoringPage() {
   const isActiveSession = !!(activeSession && activeSession.id === selectedSessionId);
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 sm:p-8 max-w-5xl">
       <header className="mb-6">
         <h1 className="text-3xl font-extrabold mb-1 flex items-center gap-3">
           Monitoring
@@ -188,7 +188,7 @@ export default function MonitoringPage() {
             </div>
           )}
 
-          <div className="grid grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             <Card className="p-5 flex items-center gap-4">
               <FocusGauge score={biometric.engagementScore} />
               <div>

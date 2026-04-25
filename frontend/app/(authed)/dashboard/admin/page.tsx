@@ -30,7 +30,7 @@ export default function AdminPage() {
   if (!user || user.role !== "ADMIN") return null;
 
   return (
-    <div className="p-8 max-w-4xl">
+    <div className="p-4 sm:p-8 max-w-4xl">
       <header className="mb-8 flex items-center gap-4">
         <div
           className="grid place-items-center w-14 h-14 rounded-2xl"

@@ -63,7 +63,7 @@ export default function AdminGenerateModulePage() {
   }
 
   return (
-    <div className="p-8 max-w-3xl">
+    <div className="p-4 sm:p-8 max-w-3xl">
       <header className="mb-8 flex items-center gap-4">
         <div className="grid place-items-center w-14 h-14 rounded-2xl text-2xl" style={{ background: "var(--color-kids-sun-light)" }}>
           ✨

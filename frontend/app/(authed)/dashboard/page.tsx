@@ -73,9 +73,9 @@ export default function DashboardHomePage() {
   }, [user]);
 
   return (
-    <div className="p-8 max-w-5xl">
+    <div className="p-4 sm:p-8 max-w-5xl">
       <header className="mb-8">
-        <h1 className="text-3xl font-extrabold mb-1">
+        <h1 className="text-2xl sm:text-3xl font-extrabold mb-1">
           Halo, {user?.name?.split(" ")[0] ?? "Pengguna"}!
         </h1>
         <p style={{ color: "var(--color-text-muted)" }}>
@@ -83,7 +83,7 @@ export default function DashboardHomePage() {
         </p>
       </header>
 
-      <div className="grid grid-cols-3 gap-4 mb-8">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4 mb-8">
         {[
           { Icon: Users, label: "Profil Anak", value: children.length, color: "var(--color-kids-purple-light)", accent: "var(--color-kids-purple-mid)" },
           { Icon: BookOpen, label: "Total Sesi", value: Object.values(sessionMap).flat().length, color: "var(--color-kids-mint-light)", accent: "var(--color-kids-mint-mid)" },
