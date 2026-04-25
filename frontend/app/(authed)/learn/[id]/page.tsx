@@ -103,6 +103,11 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
     router.push(`/modules/${m?.slug ?? ""}`);
   }
 
+  function handleFinish() {
+    // Navigate to complete page; it will call finish() on mount
+    router.push(`/learn/${id}/complete`);
+  }
+
   if (!m) {
     return (
       <div className="min-h-screen grid place-items-center px-6 text-center">
@@ -238,8 +243,8 @@ export default function LearnPage({ params }: { params: Promise<{ id: string }> 
           Sebelumnya
         </Button>
         {step === total - 1 ? (
-          <Button variant="primary" size="md" onClick={handleExit}>
-            Selesai
+          <Button variant="primary" size="md" onClick={sessionStarted ? handleFinish : handleExit}>
+            Selesai 🎉
           </Button>
         ) : (
           <Button

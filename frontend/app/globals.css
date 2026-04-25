@@ -1,13 +1,20 @@
 @import "tailwindcss";
+@import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;500;600;700;800;900&family=Nunito+Sans:wght@400;600;700&display=swap');
 
 @theme {
-  --color-surface:        #FFFFFF;
-  --color-surface-muted:  #F8FAFC;
-  --color-border:         #E2E8F0;
-  --color-text-primary:   #0F172A;
-  --color-text-muted:     #64748B;
-  --color-text-subtle:    #94A3B8;
+  /* ── Base surfaces ── */
+  --color-surface:        #FAFBFF;
+  --color-surface-muted:  #F3F0FF;
+  --color-border:         #E4DEFF;
+  --color-text-primary:   #1E1B4B;
+  --color-text-muted:     #6B7280;
+  --color-text-subtle:    #9CA3AF;
 
+  /* ── Brand navy + gold ── */
+  --color-navy:   #1E3A8A;
+  --color-gold:   #F5A623;
+
+  /* ── Blue scale (kept for compatibility) ── */
   --color-blue-50:  #EFF6FF;
   --color-blue-100: #DBEAFE;
   --color-blue-200: #BFDBFE;
@@ -18,25 +25,57 @@
   --color-blue-700: #1D4ED8;
   --color-blue-800: #1E40AF;
 
-  --color-indigo-500: #6366F1;
+  /* ── Kids pastel palette ── */
+  --color-kids-purple-light: #EDE9FF;
+  --color-kids-purple:       #C4B5FD;
+  --color-kids-purple-mid:   #7C5FE6;
+  --color-kids-purple-dark:  #5B3FCC;
 
-  --color-focus-high:   #22C55E;
+  --color-kids-pink-light:   #FFE4F0;
+  --color-kids-pink:         #FBCFE8;
+  --color-kids-pink-mid:     #EC4899;
+
+  --color-kids-mint-light:   #E0FFF5;
+  --color-kids-mint:         #A7F3D0;
+  --color-kids-mint-mid:     #10B981;
+
+  --color-kids-sun-light:    #FFFBEB;
+  --color-kids-sun:          #FDE68A;
+  --color-kids-sun-mid:      #F59E0B;
+
+  --color-kids-sky-light:    #EFF8FF;
+  --color-kids-sky:          #BFDBFE;
+  --color-kids-sky-mid:      #3B82F6;
+
+  --color-kids-peach-light:  #FFF4EC;
+  --color-kids-peach:        #FED7AA;
+  --color-kids-peach-mid:    #F97316;
+
+  /* ── Focus / status ── */
+  --color-focus-high:   #10B981;
   --color-focus-medium: #F59E0B;
   --color-focus-low:    #EF4444;
 
-  --font-display: var(--font-jakarta), "Plus Jakarta Sans", system-ui, sans-serif;
-  --font-body:    var(--font-inter), "Inter", system-ui, sans-serif;
+  /* ── Indigo accent ── */
+  --color-indigo-500: #6366F1;
 
-  --radius-sm:   0.5rem;
-  --radius-md:   0.75rem;
-  --radius-lg:   1rem;
-  --radius-xl:   1.5rem;
+  /* ── Typography ── */
+  --font-display: 'Nunito', 'Plus Jakarta Sans', system-ui, sans-serif;
+  --font-body:    'Nunito Sans', 'Inter', system-ui, sans-serif;
+
+  /* ── Radii ── */
+  --radius-sm:   0.625rem;
+  --radius-md:   1rem;
+  --radius-lg:   1.25rem;
+  --radius-xl:   1.75rem;
+  --radius-2xl:  2.25rem;
   --radius-pill: 9999px;
 
-  --shadow-sm:    0 1px 2px 0 rgb(15 23 42 / 0.04);
-  --shadow-md:    0 4px 12px 0 rgb(15 23 42 / 0.06);
-  --shadow-lg:    0 8px 24px 0 rgb(37 99 235 / 0.08);
-  --shadow-focus: 0 0 0 3px rgb(37 99 235 / 0.18);
+  /* ── Shadows ── */
+  --shadow-sm:    0 2px 6px 0 rgb(108 95 230 / 0.06);
+  --shadow-md:    0 4px 16px 0 rgb(108 95 230 / 0.10);
+  --shadow-lg:    0 8px 32px 0 rgb(108 95 230 / 0.14);
+  --shadow-focus: 0 0 0 3px rgb(108 95 230 / 0.25);
 
   --transition-fast:   150ms ease;
   --transition-normal: 250ms ease;
@@ -49,24 +88,39 @@ body {
   font-family: var(--font-body);
   background-color: var(--color-surface);
   color: var(--color-text-primary);
-  line-height: 1.6;
+  line-height: 1.65;
   -webkit-font-smoothing: antialiased;
 }
 
 h1, h2, h3, h4, h5, h6 {
   font-family: var(--font-display);
-  letter-spacing: -0.02em;
+  letter-spacing: -0.01em;
   line-height: 1.2;
+  font-weight: 800;
 }
 
 ::-webkit-scrollbar        { width: 8px; height: 8px; }
 ::-webkit-scrollbar-track  { background: transparent; }
-::-webkit-scrollbar-thumb  { background: #CBD5E1; border-radius: 9999px; }
-::-webkit-scrollbar-thumb:hover { background: #94A3B8; }
+::-webkit-scrollbar-thumb  { background: #C4B5FD; border-radius: 9999px; }
+::-webkit-scrollbar-thumb:hover { background: #7C5FE6; }
 
 @keyframes fade-in-up {
-  from { opacity: 0; transform: translateY(8px); }
+  from { opacity: 0; transform: translateY(10px); }
   to   { opacity: 1; transform: translateY(0); }
 }
+.animate-fade-in-up { animation: fade-in-up 300ms ease both; }
 
-.animate-fade-in-up { animation: fade-in-up 250ms ease both; }
+@keyframes float {
+  0%, 100% { transform: translateY(0px); }
+  50% { transform: translateY(-8px); }
+}
+.animate-float { animation: float 3s ease-in-out infinite; }
+
+@keyframes wiggle {
+  0%, 100% { transform: rotate(-2deg); }
+  50% { transform: rotate(2deg); }
+}
+.animate-wiggle { animation: wiggle 2s ease-in-out infinite; }
+
+.blob-1 { border-radius: 67% 33% 71% 29% / 42% 58% 42% 58%; }
+.blob-2 { border-radius: 42% 58% 32% 68% / 61% 38% 62% 39%; }
