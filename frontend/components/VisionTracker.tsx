@@ -12,10 +12,10 @@ export default function VisionTracker() {
   useEffect(() => {
     let faceLandmarker: FaceLandmarker
     let animationFrameId: number
+    let lastVideoTime = -1 // Variabel krusial untuk melacak frame video
 
     const initializeMediaPipe = async () => {
       try {
-        // Memuat Wasm files dari CDN resmi untuk kecepatan hackathon
         const vision = await FilesetResolver.forVisionTasks(
           'https://cdn.jsdelivr.net/npm/@mediapipe/tasks-vision@latest/wasm'
         )
@@ -39,12 +39,16 @@ export default function VisionTracker() {
 
     const startCamera = async () => {
       if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
-        const stream = await navigator.mediaDevices.getUserMedia({
-          video: { width: 640, height: 480, facingMode: 'user' }
-        })
-        if (videoRef.current) {
-          videoRef.current.srcObject = stream
-          videoRef.current.addEventListener('loadeddata', predictWebcam)
+        try {
+          const stream = await navigator.mediaDevices.getUserMedia({
+            video: { width: 640, height: 480, facingMode: 'user' }
+          })
+          if (videoRef.current) {
+            videoRef.current.srcObject = stream
+            videoRef.current.addEventListener('loadeddata', predictWebcam)
+          }
+        } catch (err) {
+          console.error("Akses kamera ditolak atau tidak ditemukan.", err)
         }
       }
     }
@@ -56,29 +60,36 @@ export default function VisionTracker() {
       const canvas = canvasRef.current
       const ctx = canvas.getContext('2d')
       
-      if (ctx) {
-        canvas.width = video.videoWidth
-        canvas.height = video.videoHeight
-        
+      // Pastikan data video sudah cukup untuk di-render
+      if (video.readyState >= 2) {
         const startTimeMs = performance.now()
-        const results = faceLandmarker.detectForVideo(video, startTimeMs)
-
-        ctx.clearRect(0, 0, canvas.width, canvas.height)
         
-        if (results.faceLandmarks) {
-          for (const landmarks of results.faceLandmarks) {
-            // Menggambar titik-titik pelacakan wajah dengan warna biru khas VISEA
-            ctx.fillStyle = '#3b82f6' 
-            for (const landmark of landmarks) {
-              ctx.beginPath()
-              ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 1.5, 0, 2 * Math.PI)
-              ctx.fill()
+        // PENCEGAHAN ERROR: Cek apakah frame video benar-benar sudah maju
+        if (lastVideoTime !== video.currentTime) {
+          lastVideoTime = video.currentTime
+          
+          // Sekarang aman untuk menjalankan deteksi
+          const results = faceLandmarker.detectForVideo(video, startTimeMs)
+
+          if (ctx) {
+            canvas.width = video.videoWidth
+            canvas.height = video.videoHeight
+            ctx.clearRect(0, 0, canvas.width, canvas.height)
+            
+            if (results.faceLandmarks) {
+              ctx.fillStyle = '#3b82f6' 
+              for (const landmarks of results.faceLandmarks) {
+                for (const landmark of landmarks) {
+                  ctx.beginPath()
+                  ctx.arc(landmark.x * canvas.width, landmark.y * canvas.height, 1.5, 0, 2 * Math.PI)
+                  ctx.fill()
+                }
+              }
             }
           }
-          
-          // TODO (HAC-11): Kirim data hasil.faceBlendshapes ke algoritma Engagement Scoring di sini
         }
       }
+      
       animationFrameId = requestAnimationFrame(predictWebcam)
     }
 
@@ -95,15 +106,14 @@ export default function VisionTracker() {
   }, [])
 
   return (
-    <div className="relative w-full h-full flex items-center justify-center bg-slate-900 overflow-hidden">
+    <div className="relative w-full h-full flex items-center justify-center bg-slate-900 overflow-hidden rounded-b-xl">
       {!isModelLoaded && (
         <div className="absolute inset-0 z-20 flex flex-col items-center justify-center bg-slate-100">
           <div className="w-8 h-8 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mb-3"></div>
-          <p className="text-slate-600 font-medium text-sm">Memuat Model Visi AI...</p>
+          <p className="text-slate-600 font-medium text-sm animate-pulse">Memuat Visi AI...</p>
         </div>
       )}
       
-      {/* Video Feed */}
       <video 
         ref={videoRef} 
         autoPlay 
@@ -112,7 +122,6 @@ export default function VisionTracker() {
         className="absolute w-full h-full object-cover opacity-60 transform scale-x-[-1]"
       />
       
-      {/* Canvas Overlay untuk Tracking */}
       <canvas 
         ref={canvasRef} 
         className="absolute w-full h-full object-cover z-10 transform scale-x-[-1]"
