@@ -8,22 +8,24 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { SessionsService } from './sessions.service';
+import { AiRagService } from '../ai-rag/ai-rag.service';
 import { OverloadStatus } from '@prisma/client';
 
-// Membuka koneksi WebSocket di port yang sama (3000), mengizinkan semua domain (CORS)
 @WebSocketGateway({ cors: { origin: '*' } })
 export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect {
-  constructor(private readonly sessionsService: SessionsService) {}
+  constructor(
+    private readonly sessionsService: SessionsService,
+    private readonly aiRagService: AiRagService,
+  ) {}
 
   handleConnection(client: Socket) {
-    console.log(`Pipa Visea Terhubung: ${client.id}`);
+    console.log(`[WS] Connected: ${client.id}`);
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Pipa Visea Terputus: ${client.id}`);
+    console.log(`[WS] Disconnected: ${client.id}`);
   }
 
-  // Mendengarkan event 'send_log' dari React/MediaPipe
   @SubscribeMessage('send_log')
   async handleBehavioralLog(
     @ConnectedSocket() client: Socket,
@@ -48,16 +50,78 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
         client.emit('ai_feedback', {
           message: result.aiInstruction.aiMessage,
           type: result.aiInstruction.instructionType,
-          timestamp: new Date()
+          timestamp: new Date(),
         });
-        console.log(`[AI TRIGGERED] Instruksi terkirim: ${result.aiInstruction.aiMessage}`);
       }
-
-      // (Opsional) Beri tahu frontend bahwa data diterima
-      // client.emit('log_received', { status: 'success' });
-      
     } catch (error) {
-      console.error('Gagal menyimpan log:', (error as Error).message);    
+      console.error('[send_log] Error:', (error as Error).message);
+    }
+  }
+
+  @SubscribeMessage('ask_question')
+  async handleAskQuestion(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: {
+      question: string;
+      grade?: number;
+      subject?: string;
+      emotion_state?: string;
+    },
+  ) {
+    try {
+      const result = await this.aiRagService.callAsk({
+        question: payload.question,
+        grade: payload.grade,
+        subject: payload.subject,
+        emotion_state: payload.emotion_state ?? 'engaged',
+      });
+
+      client.emit('ai_answer', {
+        answer: result.answer,
+        context_used: result.context_used,
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      console.error('[ask_question] Error:', (error as Error).message);
+      client.emit('ai_answer', {
+        answer: 'Maaf, terjadi kesalahan saat mencari jawaban.',
+        context_used: [],
+        timestamp: new Date(),
+      });
+    }
+  }
+
+  @SubscribeMessage('request_module')
+  async handleRequestModule(
+    @ConnectedSocket() client: Socket,
+    @MessageBody() payload: {
+      subject: string;
+      topic: string;
+      grade: number;
+      difficulty: number;
+      emotion_state?: string;
+    },
+  ) {
+    try {
+      const module = await this.aiRagService.callGenerateModule({
+        subject: payload.subject,
+        topic: payload.topic,
+        grade: payload.grade,
+        difficulty: payload.difficulty,
+        emotion_state: payload.emotion_state ?? 'engaged',
+      });
+
+      client.emit('module_ready', {
+        module,
+        timestamp: new Date(),
+      });
+    } catch (error) {
+      console.error('[request_module] Error:', (error as Error).message);
+      client.emit('module_ready', {
+        module: null,
+        error: 'Gagal membuat modul pembelajaran.',
+        timestamp: new Date(),
+      });
     }
   }
 }

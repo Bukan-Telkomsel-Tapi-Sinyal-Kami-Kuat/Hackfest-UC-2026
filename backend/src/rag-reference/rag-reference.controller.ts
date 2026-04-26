@@ -1,17 +1,15 @@
 import { Controller, Post, Body, UseGuards } from '@nestjs/common';
+import { AuthGuard } from '@nestjs/passport';
 import { Roles } from '../auth/roles.decorator';
 import { RolesGuard } from '../auth/roles.guard';
 import { Role } from '@prisma/client';
-// import JwtAuthGuard ...
 
 @Controller('knowledge-base')
-// @UseGuards(JwtAuthGuard, RolesGuard) // Pastikan user login dulu, baru cek rolenya
+@UseGuards(AuthGuard('jwt'), RolesGuard)
+@Roles(Role.ADMIN)
 export class RagReferenceController {
-  
-  // Endpoint untuk menambahkan materi baru ke sistem AI
   @Post()
-  @Roles(Role.ADMIN) // <-- HANYA ADMIN YANG BISA HIT API INI
   create(@Body() createRagDto: any) {
-    return "Materi berhasil ditambahkan ke otak Gemini!";
+    return { message: 'Materi berhasil ditambahkan ke sistem AI.' };
   }
 }

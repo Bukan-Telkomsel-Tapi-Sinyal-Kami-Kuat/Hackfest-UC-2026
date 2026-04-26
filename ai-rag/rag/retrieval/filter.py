@@ -11,10 +11,10 @@ def build_filter(
     conditions = []
 
     if grade is not None:
-        conditions.append({"grade": grade})
+        conditions.append({"grade": {"$eq": grade}})
 
     if subject is not None:
-        conditions.append({"subject": subject})
+        conditions.append({"subject": {"$eq": subject}})
 
     if not conditions:
         return {}

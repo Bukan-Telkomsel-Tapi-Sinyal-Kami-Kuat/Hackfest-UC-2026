@@ -7,8 +7,6 @@ generator client {
 
 datasource db {
   provider = "postgresql"
-  url      = env("DATABASE_URL")
-  directUrl = env("DIRECT_URL")
 }
 
 // --- Enum untuk Kategorisasi ---
@@ -115,7 +113,22 @@ model RAGReference {
   id             String         @id @default(cuid())
   disabilityType DisabilityType
   sourceTitle    String
-  content        String         @db.Text // Referensi medis/SLB yang tervalidasi
-  metadata       Json?          // Informasi tambahan seperti standar pendidikan
+  content        String         @db.Text
+  metadata       Json?
   version        String         @default("1.0")
+}
+
+model AdminModule {
+  id         String   @id @default(cuid())
+  slug       String   @unique
+  title      String
+  category   String
+  level      String
+  duration   String
+  cover      String
+  summary    String
+  objectives Json
+  steps      Json
+  createdAt  DateTime @default(now())
+  updatedAt  DateTime @updatedAt
 }

@@ -15,9 +15,6 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   // Fungsi ini otomatis dipanggil oleh NestJS jika token valid
   // Fungsi ini otomatis dipanggil oleh NestJS jika token valid
   async validate(payload: any) {
-    console.log('--- TOKEN BERHASIL DIBACA ---'); // <-- Tambahkan ini
-    console.log('Isi Payload:', payload);         // <-- Tambahkan ini
-    
-    return { userId: payload.userId, email: payload.email };
+    return { userId: payload.userId, email: payload.email, role: payload.role };
   }
 }

@@ -1,23 +1,19 @@
 # pipeline.py
 import os
 import chromadb
-from chromadb.config import Settings
 from typing import Dict, Any
-import os
+from dotenv import load_dotenv
 
 from rag.ingestion.parser import parse_markdown
 from rag.ingestion.embedder import get_embedding
 from rag.utils.chunking import chunk_text
 
+load_dotenv()
 
-CHROMA_DIR = "chroma_db"
+CHROMA_DIR = os.getenv("CHROMA_PATH", "./chroma_db")
 COLLECTION_NAME = "edu_rag"
 
-
-client = chromadb.Client(
-    Settings(persist_directory=CHROMA_DIR)
-)
-
+client = chromadb.PersistentClient(path=CHROMA_DIR)
 collection = client.get_or_create_collection(COLLECTION_NAME)
 
 
@@ -155,3 +151,26 @@ def _normalize_metadata(metadata: Dict[str, Any]) -> Dict[str, Any]:
             pass
 
     return normalized
+
+
+def ingest_folder(folder_path: str) -> None:
+    """
+    Ingest all .md files found directly in folder_path.
+    Non-.md files and subdirectories are silently skipped.
+    """
+    if not os.path.isdir(folder_path):
+        raise ValueError(f"Not a directory: {folder_path}")
+
+    md_files = [
+        os.path.join(folder_path, f)
+        for f in os.listdir(folder_path)
+        if f.endswith(".md") and os.path.isfile(os.path.join(folder_path, f))
+    ]
+
+    if not md_files:
+        print(f"[WARN] No .md files found in: {folder_path}")
+        return
+
+    print(f"[FOLDER] Found {len(md_files)} markdown files in {folder_path}")
+    for filepath in sorted(md_files):
+        ingest_file(filepath)

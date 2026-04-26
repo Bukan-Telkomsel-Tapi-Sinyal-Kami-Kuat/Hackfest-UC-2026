@@ -32,8 +32,7 @@ export class AuthService {
       },
     });
 
-    // 4. (Opsional) Langsung buatkan token agar user langsung login setelah register
-    return this.generateToken(newUser.id, newUser.email);
+    return this.generateToken(newUser.id, newUser.email, newUser.role);
   }
 
   async login(email: string, pass: string) {
@@ -52,15 +51,15 @@ export class AuthService {
     }
 
     // 3. Jika cocok, berikan JWT
-    return this.generateToken(user.id, user.email);
+    return this.generateToken(user.id, user.email, user.role);
   }
 
-  // Fungsi helper untuk men-generate JWT
-  private generateToken(userId: string, email: string) {
-    const payload = { userId, email }; // Data yang akan disimpan di dalam token
+  private generateToken(userId: string, email: string, role: string) {
+    const payload = { userId, email, role };
     return {
       access_token: this.jwtService.sign(payload),
       userId: userId,
+      role,
     };
   }
 }
