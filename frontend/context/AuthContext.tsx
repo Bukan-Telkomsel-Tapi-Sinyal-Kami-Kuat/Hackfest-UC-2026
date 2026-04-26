@@ -9,13 +9,7 @@ import {
   type ReactNode,
 } from "react";
 import type { AuthResult, User } from "@/types/auth";
-import {
-  getCurrentUser,
-  mockSignIn,
-  mockSignInWithGoogle,
-  mockSignOut,
-  mockSignUp,
-} from "@/lib/auth/mockAuth";
+import { getCurrentUser, signIn, signUp, signInWithGoogle, signOut } from "@/lib/auth/realAuth";
 
 interface AuthContextValue {
   user: User | null;
@@ -37,31 +31,39 @@ export function AuthProvider({ children }: { children: ReactNode }) {
     setLoading(false);
   }, []);
 
-  const signIn = useCallback(async (email: string, password: string) => {
-    const res = await mockSignIn(email, password);
+  const handleSignIn = useCallback(async (email: string, password: string) => {
+    const res = await signIn(email, password);
     if (!res.error) setUser(getCurrentUser());
     return res;
   }, []);
 
-  const signUp = useCallback(async (email: string, password: string, name: string) => {
-    const res = await mockSignUp(email, password, name);
+  const handleSignUp = useCallback(async (email: string, password: string, name: string) => {
+    const res = await signUp(email, password, name);
     if (!res.error) setUser(getCurrentUser());
     return res;
   }, []);
 
-  const signInWithGoogle = useCallback(async () => {
-    const res = await mockSignInWithGoogle();
-    if (!res.error) setUser(getCurrentUser());
+  const handleSignInWithGoogle = useCallback(async () => {
+    const res = await signInWithGoogle();
     return res;
   }, []);
 
-  const signOut = useCallback(async () => {
-    await mockSignOut();
+  const handleSignOut = useCallback(async () => {
+    await signOut();
     setUser(null);
   }, []);
 
   return (
-    <AuthContext.Provider value={{ user, loading, signIn, signUp, signInWithGoogle, signOut }}>
+    <AuthContext.Provider
+      value={{
+        user,
+        loading,
+        signIn: handleSignIn,
+        signUp: handleSignUp,
+        signInWithGoogle: handleSignInWithGoogle,
+        signOut: handleSignOut,
+      }}
+    >
       {children}
     </AuthContext.Provider>
   );

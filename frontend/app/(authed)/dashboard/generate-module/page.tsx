@@ -4,7 +4,7 @@ import { useState } from "react";
 import { Sparkles, Copy, CheckCheck, ArrowRight } from "lucide-react";
 import { Card } from "@/components/ui/Card";
 import { Button } from "@/components/ui/Button";
-import { generateModuleMock } from "@/lib/api/gemini";
+import { generateModuleWithGemini, type GenerateModuleResult } from "@/lib/api/gemini";
 import { createAdminModule } from "@/lib/api/admin-modules";
 import { CATEGORIES } from "@/lib/modules/data";
 import { DISABILITY_OPTIONS } from "@/types/child";
@@ -21,7 +21,7 @@ export default function GenerateModulePage() {
     additionalContext: "",
   });
   const [loading, setLoading] = useState(false);
-  const [result, setResult] = useState<Awaited<ReturnType<typeof generateModuleMock>> | null>(null);
+  const [result, setResult] = useState<GenerateModuleResult | null>(null);
   const [copied, setCopied] = useState(false);
   const [saving, setSaving] = useState(false);
   const [saved, setSaved] = useState(false);
@@ -32,7 +32,7 @@ export default function GenerateModulePage() {
     setResult(null);
     setSaved(false);
     try {
-      setResult(await generateModuleMock(form));
+      setResult(await generateModuleWithGemini(form));
     } finally {
       setLoading(false);
     }

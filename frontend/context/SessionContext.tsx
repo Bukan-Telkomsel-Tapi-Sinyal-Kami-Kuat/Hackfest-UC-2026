@@ -110,8 +110,8 @@ export function SessionProvider({ children }: { children: ReactNode }) {
       gazeDirection: string,
       overloadStatus: OverloadStatus
     ) => {
-      if (!activeSession) return;
-      await addBehavioralLog(activeSession.id, { engagementScore, gazeDirection, overloadStatus });
+      if (!activeSession || !activeChild) return;
+      await addBehavioralLog(activeSession.id, activeChild.id, { engagementScore, gazeDirection, overloadStatus });
 
       const now = Date.now();
       const isEscalating =
@@ -126,7 +126,7 @@ export function SessionProvider({ children }: { children: ReactNode }) {
         lastStatusRef.current = "STABLE";
       }
     },
-    [activeSession]
+    [activeSession, activeChild]
   );
 
   const acknowledgePrompt = useCallback((promptId: string) => {

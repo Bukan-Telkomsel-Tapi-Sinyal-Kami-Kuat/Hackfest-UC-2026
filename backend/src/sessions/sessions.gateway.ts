@@ -48,9 +48,12 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
 
       if (result.aiInstruction) {
         client.emit('ai_feedback', {
-          message: result.aiInstruction.aiMessage,
-          type: result.aiInstruction.instructionType,
-          timestamp: new Date(),
+          id: result.aiInstruction.id,
+          sessionId: payload.sessionId,
+          aiMessage: result.aiInstruction.aiMessage,
+          instructionType: result.aiInstruction.instructionType,
+          parentAcknowledged: false,
+          timestamp: (result.aiInstruction.timestamp as Date | undefined)?.toISOString() ?? new Date().toISOString(),
         });
       }
     } catch (error) {
@@ -84,7 +87,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
     } catch (error) {
       console.error('[ask_question] Error:', (error as Error).message);
       client.emit('ai_answer', {
-        answer: 'Maaf, terjadi kesalahan saat mencari jawaban.',
+        answer: 'Aku sedang mengalami gangguan. Coba lagi sebentar ya.',
         context_used: [],
         timestamp: new Date(),
       });
@@ -119,7 +122,7 @@ export class SessionsGateway implements OnGatewayConnection, OnGatewayDisconnect
       console.error('[request_module] Error:', (error as Error).message);
       client.emit('module_ready', {
         module: null,
-        error: 'Gagal membuat modul pembelajaran.',
+        error: 'Aku sedang mengalami gangguan. Coba lagi sebentar ya.',
         timestamp: new Date(),
       });
     }

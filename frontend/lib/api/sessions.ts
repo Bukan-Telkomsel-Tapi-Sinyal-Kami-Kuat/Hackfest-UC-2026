@@ -28,6 +28,7 @@ export async function getAllSessions(): Promise<Session[]> {
 
 export async function addBehavioralLog(
   sessionId: string,
+  childId: string,
   data: {
     engagementScore: number;
     gazeDirection: string;
@@ -36,7 +37,7 @@ export async function addBehavioralLog(
   }
 ): Promise<BehavioralLog> {
   const socket = getSocket();
-  socket.emit("send_log", { sessionId, ...data });
+  socket.emit("send_log", { sessionId, childId, ...data });
   return {
     id: `bl_${Date.now()}_${Math.random().toString(36).slice(2)}`,
     sessionId,

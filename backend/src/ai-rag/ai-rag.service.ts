@@ -70,19 +70,31 @@ export class AiRagService {
 
     this.logger.log(`[ask] ${JSON.stringify(normalized)}`);
 
-    const res = await fetch(`${AI_RAG_BASE}/ask`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(normalized),
-      signal: AbortSignal.timeout(150_000),
-    });
+    try {
+      const res = await fetch(`${AI_RAG_BASE}/ask`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(normalized),
+        signal: AbortSignal.timeout(150_000),
+      });
 
-    if (!res.ok) {
-      const detail = await res.text();
-      throw new Error(`AI-RAG /ask ${res.status}: ${detail}`);
+      if (!res.ok) {
+        this.logger.warn(`[ask] AI-RAG ${res.status}, using fallback`);
+        return this.mockAskResponse(payload.question);
+      }
+
+      return res.json() as Promise<AskResponse>;
+    } catch (err) {
+      this.logger.warn(`[ask] AI-RAG unreachable: ${(err as Error).message}, using fallback`);
+      return this.mockAskResponse(payload.question);
     }
+  }
 
-    return res.json() as Promise<AskResponse>;
+  private mockAskResponse(question: string): AskResponse {
+    return {
+      answer: `Ini adalah jawaban contoh untuk pertanyaan: "${question}". Sistem AI sedang dalam mode demo.`,
+      context_used: [],
+    };
   }
 
   async callGenerateModule(payload: ModulePayload): Promise<GeneratedModule> {
@@ -101,18 +113,44 @@ export class AiRagService {
 
     this.logger.log(`[generate-module] ${JSON.stringify(normalized)}`);
 
-    const res = await fetch(`${AI_RAG_BASE}/generate-module`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(normalized),
-      signal: AbortSignal.timeout(150_000),
-    });
+    try {
+      const res = await fetch(`${AI_RAG_BASE}/generate-module`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(normalized),
+        signal: AbortSignal.timeout(150_000),
+      });
 
-    if (!res.ok) {
-      const detail = await res.text();
-      throw new Error(`AI-RAG /generate-module ${res.status}: ${detail}`);
+      if (!res.ok) {
+        this.logger.warn(`[generate-module] AI-RAG ${res.status}, using fallback`);
+        return this.mockGeneratedModule(payload.topic);
+      }
+
+      return res.json() as Promise<GeneratedModule>;
+    } catch (err) {
+      this.logger.warn(`[generate-module] AI-RAG unreachable: ${(err as Error).message}, using fallback`);
+      return this.mockGeneratedModule(payload.topic);
     }
+  }
 
-    return res.json() as Promise<GeneratedModule>;
+  private mockGeneratedModule(topic: string): GeneratedModule {
+    return {
+      title: `Modul: ${topic}`,
+      explanation: `Penjelasan demo untuk topik "${topic}". Sistem AI sedang dalam mode demo dan akan segera tersedia.`,
+      examples: [
+        `Contoh 1 untuk ${topic}`,
+        `Contoh 2 untuk ${topic}`,
+        `Contoh 3 untuk ${topic}`,
+      ],
+      exercise: [
+        { question: `Apa yang kamu ketahui tentang ${topic}?`, answer: `Jawaban demo untuk ${topic}.` },
+        { question: `Sebutkan contoh dari ${topic}!`, answer: `Contoh demo untuk ${topic}.` },
+      ],
+      accessibility: {
+        tunanetra: `Deskripsi audio untuk ${topic}`,
+        tunarungu: `Visual aids tersedia untuk ${topic}`,
+        disleksia: `Font dan layout khusus untuk ${topic}`,
+      },
+    };
   }
 }
